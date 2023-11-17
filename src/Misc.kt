@@ -2,7 +2,7 @@ import java.io.File
 import kotlin.math.min
 import kotlin.system.measureNanoTime
 
-fun readInput(name: String) = File("input", "$name.txt").readLines()
+fun readInput(name: String): List<String> = File("input", "$name.txt").readLines()
 
 fun Any?.println() = println(this)
 
