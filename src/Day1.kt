@@ -8,6 +8,7 @@ fun main() {
 
     val digitWords = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").mapIndexed { i, s -> s to i + 1 }.toMap()
     fun toDigitsWithWords(s: String): List<Int> {
+        s.findAnyOf(digitWords.keys)
         val digits = mutableListOf<Int>()
         var i = 0
         while (i < s.length) {
@@ -25,6 +26,14 @@ fun main() {
     fun part1(): Int = input.map(::toDigits).sumOf(::getCalibration)
     fun part2(): Int = input.map(::toDigitsWithWords).sumOf(::getCalibration)
 
+    val allDigitWords = ((0..9).map(Int::toString) + listOf("#placeholder", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")).mapIndexed { i, s -> s to i % 10 }.toMap()
+    fun part2Alternative() = input.sumOf {
+        val firstDigit = it.findAnyOf(allDigitWords.keys)!!.second
+        val lastDigit = it.findLastAnyOf(allDigitWords.keys)!!.second
+        allDigitWords[firstDigit]!! * 10 + allDigitWords[lastDigit]!!
+    }
+
     measure { part1() }
     measure { part2() }
+    measure { part2Alternative() }
 }
