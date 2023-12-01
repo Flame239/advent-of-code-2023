@@ -26,7 +26,9 @@ fun main() {
     fun part1(): Int = input.map(::toDigits).sumOf(::getCalibration)
     fun part2(): Int = input.map(::toDigitsWithWords).sumOf(::getCalibration)
 
-    val allDigitWords = ((0..9).map(Int::toString) + listOf("#placeholder", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine")).mapIndexed { i, s -> s to i % 10 }.toMap()
+    val allDigitWords = ((0..9).map(Int::toString) + listOf("zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"))
+            .mapIndexed { i, s -> s to i % 10 }.toMap()
+
     fun part2Alternative() = input.sumOf {
         val firstDigit = it.findAnyOf(allDigitWords.keys)!!.second
         val lastDigit = it.findLastAnyOf(allDigitWords.keys)!!.second
