@@ -4,7 +4,7 @@ fun main() {
     }
 
     fun getCalibration(digits: List<Int>): Int = digits.first() * 10 + digits.last()
-    fun toDigits(s: String) = s.filter { it.isDigit() }.map { it.digitToInt() }
+    fun toDigits(s: String) = s.filter(Char::isDigit).map(Char::digitToInt)
 
     val digitWords = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").mapIndexed { i, s -> s to i + 1 }.toMap()
     fun toDigitsWithWords(s: String): List<Int> {
@@ -22,8 +22,8 @@ fun main() {
         return digits
     }
 
-    fun part1(): Int = input.map { toDigits(it) }.sumOf { getCalibration(it) }
-    fun part2(): Int = input.map { toDigitsWithWords(it) }.sumOf { getCalibration(it) }
+    fun part1(): Int = input.map(::toDigits).sumOf(::getCalibration)
+    fun part2(): Int = input.map(::toDigitsWithWords).sumOf(::getCalibration)
 
     measure { part1() }
     measure { part2() }
