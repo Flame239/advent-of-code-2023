@@ -8,7 +8,6 @@ fun main() {
 
     val digitWords = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").mapIndexed { i, s -> s to i + 1 }.toMap()
     fun toDigitsWithWords(s: String): List<Int> {
-        s.findAnyOf(digitWords.keys)
         val digits = mutableListOf<Int>()
         var i = 0
         while (i < s.length) {
