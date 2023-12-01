@@ -21,6 +21,14 @@ fun <T> List<T>.orderedPairs(): Sequence<Pair<T, T>> = sequence {
     }
 }
 
+fun <T> List<T>.unorderedPairs(): Sequence<Pair<T, T>> = sequence {
+    for (i in 0 until size - 1) {
+        for (j in i + 1 until size) {
+            yield(get(i) to get(j))
+        }
+    }
+}
+
 fun ClosedRange<Int>.intersect(other: ClosedRange<Int>) = !(start > other.endInclusive || endInclusive < other.start)
 
 fun ClosedRange<Int>.contains(other: ClosedRange<Int>) = other.start >= start && other.endInclusive <= endInclusive
@@ -38,3 +46,15 @@ fun <T> MutableList<T>.swap(i: Int, j: Int) {
 }
 
 fun List<Int>.lcm() = lcmList(this)
+
+fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> =
+    fold(mutableListOf(mutableListOf<T>())) { acc, t ->
+        if (predicate(t)) acc.add(mutableListOf()) else acc.last().add(t)
+        acc
+    }.filterNot { it.isEmpty() }
+
+fun List<Long>.mult(): Long = this.reduce(Long::times)
+
+fun String.isNumber() = this.all { it.isDigit() }
+
+fun Char.isHex() = this.isDigit() || this in 'a'..'f'
