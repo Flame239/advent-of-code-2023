@@ -9,15 +9,12 @@ fun main() {
     val digitWords = listOf("one", "two", "three", "four", "five", "six", "seven", "eight", "nine").mapIndexed { i, s -> s to i + 1 }.toMap()
     fun toDigitsWithWords(s: String): List<Int> {
         val digits = mutableListOf<Int>()
-        var i = 0
-        while (i < s.length) {
+        for (i in s.indices) {
             if (s[i].isDigit()) {
                 digits.add(s[i].digitToInt())
-                i++
-                continue
+            } else {
+                digitWords.entries.firstOrNull { s.startsWith(it.key, i) }?.also { digits.add(it.value) }
             }
-            digitWords.entries.firstOrNull { s.startsWith(it.key, i) }?.also { digits.add(it.value) }
-            i++
         }
         return digits
     }
