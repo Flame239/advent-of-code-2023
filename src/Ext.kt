@@ -48,13 +48,26 @@ fun <T> MutableList<T>.swap(i: Int, j: Int) {
 fun List<Int>.lcm() = lcmList(this)
 
 fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> =
-    fold(mutableListOf(mutableListOf<T>())) { acc, t ->
-        if (predicate(t)) acc.add(mutableListOf()) else acc.last().add(t)
-        acc
-    }.filterNot { it.isEmpty() }
+        fold(mutableListOf(mutableListOf<T>())) { acc, t ->
+            if (predicate(t)) acc.add(mutableListOf()) else acc.last().add(t)
+            acc
+        }.filterNot { it.isEmpty() }
 
 fun List<Long>.mult(): Long = this.reduce(Long::times)
 
 fun String.isNumber() = this.all { it.isDigit() }
 
 fun Char.isHex() = this.isDigit() || this in 'a'..'f'
+
+typealias IntArray2 = Array<IntArray>
+
+inline fun IntArray2.sumOfIndexed2(action: (i: Int, j: Int, x: Int) -> Long): Long {
+    var sum = 0L
+    for (i in indices) {
+        val b = get(i)
+        for (j in b.indices) {
+            sum += action(i, j, b[j])
+        }
+    }
+    return sum
+}
