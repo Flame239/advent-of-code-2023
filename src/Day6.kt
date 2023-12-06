@@ -12,7 +12,6 @@ fun main() {
 
     val singleRace by lazy {
         val lines = readInput("Day6").map { it.substringAfter(":").replace(" ", "").toLong() }
-        println(lines)
         Race(lines[0], lines[1])
     }
 
@@ -25,10 +24,10 @@ fun main() {
         val r1 = (-b + sqrt(det)) / (2 * a)
         val r2 = (-b - sqrt(det)) / (2 * a)
 
-        return (floor(r1).toLong()..ceil(r2).toLong()).count { t -> -t * t + t * r.time > r.maxDist }.toLong()
+        return floor(r2).toLong() - ceil(r1).toLong() + 1
     }
 
-    fun part1(): Long = races.map(::beatTheRace).mult()
+    fun part1(): Long = races.map(::beatTheRace).also { println(it) }.mult()
 
     fun part2(): Long = beatTheRace(singleRace)
 
