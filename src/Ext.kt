@@ -45,7 +45,7 @@ fun <T> MutableList<T>.swap(i: Int, j: Int) {
     this[j] = tmp
 }
 
-fun List<Int>.lcm() = lcmList(this)
+fun List<Long>.lcm() = lcmList(this)
 
 fun <T> List<T>.splitBy(predicate: (T) -> Boolean): List<List<T>> =
         fold(mutableListOf(mutableListOf<T>())) { acc, t ->

@@ -6,16 +6,16 @@ fun readInput(name: String): List<String> = File("input", "$name.txt").readLines
 
 fun Any?.println() = println(this)
 
-fun gcd(a: Int, b: Int): Int {
-    if (b == 0) return a
+fun gcd(a: Long, b: Long): Long {
+    if (b == 0L) return a
     return gcd(b, a % b)
 }
 
-fun lcm(a: Int, b: Int): Int {
+fun lcm(a: Long, b: Long): Long {
     return a / gcd(a, b) * b
 }
 
-fun lcmList(input: List<Int>): Int {
+fun lcmList(input: List<Long>): Long {
     return input.reduce { a, b -> lcm(a, b) }
 }
 
