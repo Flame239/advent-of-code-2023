@@ -1,14 +1,14 @@
 import kotlin.math.abs
 
-data class C(val x: Int, val y: Int) {
+data class C(val i: Long, val j: Long) {
     override fun toString(): String {
-        return "($x;$y)"
+        return "($i;$j)"
     }
 
-    fun manhattan(other: C): Int {
-        return abs(x - other.x) + abs(y - other.y)
+    fun manhattan(other: C): Long {
+        return abs(i - other.i) + abs(j - other.j)
     }
 
-    fun shiftY(diff: Int): C = C(x, y + diff)
-    fun shiftX(diff: Int): C = C(x + diff, y)
+    fun shiftY(diff: Int): C = C(i, j + diff)
+    fun shiftX(diff: Int): C = C(i + diff, j)
 }
