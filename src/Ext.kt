@@ -61,6 +61,10 @@ fun Char.isHex() = this.isDigit() || this in 'a'..'f'
 
 typealias IntArray2 = Array<IntArray>
 
+typealias LongArray3 = Array<Array<LongArray>>
+
+fun longArray3(n: Int, m: Int, k: Int, default: Long = 0) = Array(n) { Array(m) { LongArray(k) { default } } }
+
 inline fun IntArray2.sumOfIndexed2(action: (i: Int, j: Int, x: Int) -> Long): Long {
     var sum = 0L
     for (i in indices) {
