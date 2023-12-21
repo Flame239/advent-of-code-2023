@@ -5,16 +5,6 @@ fun main() {
     val n = map.size
     val m = map[0].size
 
-    data class Dir(val stepI: Int, val stepJ: Int) {
-        val horizontal = stepJ != 0
-        val vertical = stepI != 0
-    }
-
-    val DIR_UP = Dir(-1, 0)
-    val DIR_DOWN = Dir(1, 0)
-    val DIR_LEFT = Dir(0, -1)
-    val DIR_RIGHT = Dir(0, 1)
-
     fun move(startI: Int, startJ: Int, startDirection: Dir, visited: Array<Array<ArrayList<Dir>>>) {
         var i = startI
         var j = startJ

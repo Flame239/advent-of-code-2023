@@ -1,6 +1,6 @@
-import Dir.*
+import Direction.*
 
-private enum class Dir {
+private enum class Direction {
     TOP, BOTTOM, LEFT, RIGHT
 }
 

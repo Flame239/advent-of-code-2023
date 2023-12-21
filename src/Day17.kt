@@ -5,13 +5,6 @@ fun main() {
     val n = map.size
     val m = map[0].size
 
-    data class Dir(val stepI: Int, val stepJ: Int)
-
-    val DIR_UP = Dir(-1, 0)
-    val DIR_DOWN = Dir(1, 0)
-    val DIR_LEFT = Dir(0, -1)
-    val DIR_RIGHT = Dir(0, 1)
-
     data class V(val i: Int, val j: Int, val dir: Dir, val cons: Int)
 
     val cache = HashMap<V, Int>()
