@@ -89,7 +89,7 @@ fun main() {
         val rocksToStep = hashMapOf<List<List<Char>>, Int>()
         var cur = rocks
         var step = 0
-        while (!rocksToStep.contains(cur)) {
+        while (cur !in rocksToStep) {
             rocksToStep[cur] = step
             cur = cycle(cur)
             step++
