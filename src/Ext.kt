@@ -77,3 +77,5 @@ inline fun IntArray2.sumOfIndexed2(action: (i: Int, j: Int, x: Int) -> Long): Lo
 }
 
 fun List<Long>.diffs() = this.windowed(2).map { it[1] - it[0] }
+
+fun Array<BooleanArray>.copy() = Array(size) { get(it).clone() }
