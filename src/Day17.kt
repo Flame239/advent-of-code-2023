@@ -5,48 +5,42 @@ fun main() {
     val n = map.size
     val m = map[0].size
 
-    data class V(val i: Int, val j: Int, val dir: Dir, val cons: Int)
+    data class V(val i: Int, val j: Int, val dir: Dir)
 
-    val cache = HashMap<V, Int>()
+    class ShortestPathFinder(val minSteps: Int, val maxSteps: Int, initMin: Int) {
+        val cache = HashMap<V, Int>()
+        var min = initMin
 
-    // ballpark
-    var min = (1 until n).sumOf { map[it - 1][it] + map[it][it] }
-    fun findPath(i: Int, j: Int, dir: Dir, cost: Int, cons: Int) {
-//        println("$i $j")
-        if (i !in map.indices || j !in map[0].indices) return
-
-        val newCost = cost + map[i][j]
-        if (i == n - 1 && j == m - 1) {
-//            println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
-            min = min(min, newCost)
-        }
-        if (newCost > min) return
-        //
-//        if (cache.containsKey(V(i, j, dir, cons)) && cache[V(i, j, dir, cons)]!! > newCost) println("Found better path $i $j $dir $cons  ${cache[V(i, j, dir, cons)]!!} -> $newCost  $min")
-        //
-        if (cache.getOrDefault(V(i, j, dir, cons), Int.MAX_VALUE) <= newCost) return
-        cache[V(i, j, dir, cons)] = newCost
-
-        if (cons < 3) {
-            findPath(i + dir.stepI, j + dir.stepJ, dir, newCost, cons + 1)
+        fun shortestPath(): Int {
+            findPath(0, 0, DIR_RIGHT, 0)
+            findPath(0, 0, DIR_DOWN, 0)
+            return min - map[0][0]
         }
 
-        val dir1 = Dir(dir.stepJ, dir.stepI)
-        findPath(i + dir1.stepI, j + dir1.stepJ, dir1, newCost, 1)
+        fun findPath(i: Int, j: Int, dir: Dir, cost: Int) {
+            val newCost = cost + map[i][j]
+            if (i == n - 1 && j == m - 1) {
+                min = min(min, newCost)
+                return
+            }
+            if (newCost > min) return
+            if (cache.getOrDefault(V(i, j, dir), Int.MAX_VALUE) <= newCost) return
+            cache[V(i, j, dir)] = newCost
 
-        val dir2 = Dir(-dir.stepJ, -dir.stepI)
-        findPath(i + dir2.stepI, j + dir2.stepJ, dir2, newCost, 1)
+            listOf(Dir(dir.stepJ, dir.stepI), Dir(-dir.stepJ, -dir.stepI)).forEach { d ->
+                for (step in minSteps..maxSteps) {
+                    val curI = i + step * d.stepI
+                    val curJ = j + step * d.stepJ
+                    if (curI in map.indices && curJ in map[0].indices) {
+                        findPath(curI, curJ, d, newCost + (1..<step).sumOf { s -> map[i + s * d.stepI][j + s * d.stepJ] })
+                    }
+                }
+            }
+        }
     }
 
-    fun part1(): Int {
-        findPath(0, 1, DIR_RIGHT, 0, 1)
-//        findPath(1, 0, DIR_DOWN, 0, 1)
-        return min
-    }
-
-    fun part2(): Int {
-        return map.size
-    }
+    fun part1(): Int = ShortestPathFinder(1, 3, (1 until n).sumOf { map[it - 1][it] + map[it][it] }).shortestPath()
+    fun part2(): Int = ShortestPathFinder(4, 10, Integer.MAX_VALUE).shortestPath()
 
     measure { part1() }
     measure { part2() }
