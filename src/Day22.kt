@@ -43,9 +43,9 @@ fun main() {
         }
     }
 
-    fun part1(): Int = supports.withIndex().count { (bi, top) ->
-        // either no bricks on top or all the bricks on top supported by at least 1 other brick
-        top.isEmpty() || top.all { t -> supportedBy[t].any { it != bi } }
+    fun part1(): Int = supports.count { top ->
+        // either no bricks on top or all the bricks on top supported by any other bricks
+        top.isEmpty() || top.all { t -> supportedBy[t].size > 1 }
     }
 
     fun part2(): Int = bricks.indices.sumOf { i ->
@@ -55,7 +55,8 @@ fun main() {
         willMove[i] = true
         while (!bq.isEmpty()) {
             val bi = bq.removeFirst()
-            val topMove = supports[bi].filter { t -> supportedBy[t].all { s -> willMove[s] } }
+            // top brick will move if all its bottom bricks will move
+            val topMove = supports[bi].filter { t -> supportedBy[t].all { bot -> willMove[bot] } }
             topMove.forEach { t -> willMove[t] = true }
             bq.addAll(topMove)
         }
