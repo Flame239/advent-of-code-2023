@@ -1,47 +1,50 @@
+import kotlin.math.max
+import kotlin.math.min
+
 fun main() {
-    data class V3(val x: Int, val y: Int, val z: Int)
+    data class V3(val x: Int, val y: Int, var z: Int)
     data class Brick(val id: Int, val start: V3, val end: V3) {
-        val x = start.x != end.x
-        val y = start.y != end.y
-        val z = start.z != end.z
+        val minZ: Int
+            get() = min(start.z, end.z)
+        val maxZ: Int
+            get() = max(start.z, end.z)
+
+        fun shiftZto(targetZ: Int) {
+            val zDiff = minZ - targetZ
+            start.z = minZ - zDiff
+            end.z = maxZ - zDiff
+        }
     }
 
-    val bricks = readInput("Day22-ex").mapIndexed { i, l ->
-        val coords = l.split("~")
-        val start = coords[0].split(",").map(String::toInt).let { V3(it[0], it[1], it[2]) }
-        val end = coords[1].split(",").map(String::toInt).let { V3(it[0], it[1], it[2]) }
-        Brick(i, start, end)
+    val bricks = readInput("Day22").mapIndexed { i, l ->
+        val coords = l.split("~").map { b -> b.split(",").map(String::toInt).let { V3(it[0], it[1], it[2]) } }
+        Brick(i, coords[0], coords[1])
     }
 
     fun part1(): Int {
-        val xy = Array(10) { Array(10) { ArrayList<Brick>() } }
-        bricks.forEach { b ->
-            if (b.x) {
-                for (x in b.start.x..b.end.x) {
-                    xy[x][b.start.y].add(b)
-                }
-            } else if (b.y) {
-                for (y in b.start.y..b.end.y) {
-                    xy[b.start.x][y].add(b)
-                }
-            } else {
-                xy[b.start.x][b.start.y].add(b)
+        val bb = Array(10) { Array(10) { ArrayList<Brick>() } }
+        bricks.sortedBy(Brick::minZ).forEach { b ->
+            var newMinZ = 0
+            for (x in b.start.x..b.end.x) for (y in b.start.y..b.end.y) {
+                newMinZ = max(newMinZ, (bb[x][y].lastOrNull()?.maxZ ?: 0) + 1)
+                bb[x][y].add(b)
             }
+            b.shiftZto(newMinZ)
         }
 
-        val newZ = IntArray(bricks.size) { i -> bricks[i].start.z }
         val supports = Array(bricks.size) { HashSet<Int>() }
+        val supportedBy = Array(bricks.size) { HashSet<Int>() }
 
-        for (x in xy.indices) for (y in xy[0].indices) {
-            xy[x][y].sortedBy(Brick::z).windowed(2).forEach { (bottomB, topB) ->
-                supports[bottomB.id].add(topB.id)
+        for (x in bb.indices) for (y in bb[0].indices) {
+            bb[x][y].windowed(2).forEach { (bottomB, topB) ->
+                if (topB.minZ == bottomB.maxZ + 1) {
+                    supports[bottomB.id].add(topB.id)
+                    supportedBy[topB.id].add(bottomB.id)
+                }
             }
         }
 
-        supports.forEachIndexed { i, bs ->
-            println("$i supports $bs")
-        }
-        return bricks.size
+        return supports.withIndex().count { (bi, top) -> top.isEmpty() || top.all { t -> supportedBy[t].any { it != bi } } }
     }
 
     fun part2(): Int {
