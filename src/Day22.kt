@@ -21,34 +21,45 @@ fun main() {
         Brick(i, coords[0], coords[1])
     }
 
-    fun part1(): Int {
-        val bb = Array(10) { Array(10) { ArrayList<Brick>() } }
-        bricks.sortedBy(Brick::minZ).forEach { b ->
-            var newMinZ = 0
-            for (x in b.start.x..b.end.x) for (y in b.start.y..b.end.y) {
-                newMinZ = max(newMinZ, (bb[x][y].lastOrNull()?.maxZ ?: 0) + 1)
-                bb[x][y].add(b)
-            }
-            b.shiftZto(newMinZ)
+    val bb = Array(10) { Array(10) { ArrayList<Brick>() } }
+    bricks.sortedBy(Brick::minZ).forEach { b ->
+        var newMinZ = 0
+        for (x in b.start.x..b.end.x) for (y in b.start.y..b.end.y) {
+            newMinZ = max(newMinZ, (bb[x][y].lastOrNull()?.maxZ ?: 0) + 1)
+            bb[x][y].add(b)
         }
-
-        val supports = Array(bricks.size) { HashSet<Int>() }
-        val supportedBy = Array(bricks.size) { HashSet<Int>() }
-
-        for (x in bb.indices) for (y in bb[0].indices) {
-            bb[x][y].windowed(2).forEach { (bottomB, topB) ->
-                if (topB.minZ == bottomB.maxZ + 1) {
-                    supports[bottomB.id].add(topB.id)
-                    supportedBy[topB.id].add(bottomB.id)
-                }
-            }
-        }
-
-        return supports.withIndex().count { (bi, top) -> top.isEmpty() || top.all { t -> supportedBy[t].any { it != bi } } }
+        b.shiftZto(newMinZ)
     }
 
-    fun part2(): Int {
-        return bricks.size
+    val supports = Array(bricks.size) { HashSet<Int>() }
+    val supportedBy = Array(bricks.size) { HashSet<Int>() }
+
+    for (x in bb.indices) for (y in bb[0].indices) {
+        bb[x][y].windowed(2).forEach { (bot, top) ->
+            if (top.minZ == bot.maxZ + 1) {
+                supports[bot.id].add(top.id)
+                supportedBy[top.id].add(bot.id)
+            }
+        }
+    }
+
+    fun part1(): Int = supports.withIndex().count { (bi, top) ->
+        // either no bricks on top or all the bricks on top supported by at least 1 other brick
+        top.isEmpty() || top.all { t -> supportedBy[t].any { it != bi } }
+    }
+
+    fun part2(): Int = bricks.indices.sumOf { i ->
+        val willMove = BooleanArray(bricks.size)
+        val bq = ArrayDeque<Int>()
+        bq.add(i)
+        willMove[i] = true
+        while (!bq.isEmpty()) {
+            val bi = bq.removeFirst()
+            val topMove = supports[bi].filter { t -> supportedBy[t].all { s -> willMove[s] } }
+            topMove.forEach { t -> willMove[t] = true }
+            bq.addAll(topMove)
+        }
+        willMove.count { it } - 1
     }
 
     measure { part1() }
